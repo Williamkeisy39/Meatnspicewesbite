@@ -21,7 +21,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
     return (
         <div className={cn("group relative flex flex-col gap-3", className)}>
             {/* Image Container */}
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-secondary/20">
+            <div className="relative aspect-4/5 w-full overflow-hidden rounded-xl bg-secondary/20">
                 <Link href={`/products/${product.id}`}>
                     <Image
                         src={product.image}

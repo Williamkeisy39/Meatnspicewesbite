@@ -9,7 +9,7 @@ const SOCIAL = [
 
 export function TopBar() {
     return (
-        <div className="w-full bg-[#cc1111] text-white text-xs">
+        <div className="w-full bg-[#8B5E3C] text-white text-xs">
             <div className="max-w-[1280px] mx-auto px-5 h-9 flex items-center justify-between gap-4">
 
              

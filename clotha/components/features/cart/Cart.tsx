@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { X, Plus, Minus, ShoppingBag } from "lucide-react";
+import { X, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCartContext } from "@/lib/providers/cart-provider";
+import Link from "next/link";
 
 export function Cart() {
   const { cart, isOpen, toggleCart, removeFromCart, updateQuantity } = useCartContext();
@@ -19,21 +20,21 @@ export function Cart() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-fade-in"
         onClick={toggleCart}
       />
 
       {/* Cart Drawer */}
-      <div className="fixed inset-y-0 right-0 z-50 w-full md:w-[400px] bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out">
+      <div className="fixed inset-y-0 right-0 z-50 w-full md:w-[420px] bg-[#0a0a0a] shadow-2xl shadow-black flex flex-col border-l border-[#2a2a2a] animate-slide-in-right">
         {/* Header */}
-        <div className="px-6 py-4 border-b flex items-center justify-between">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5" />
-            Your Cart ({items.length})
+        <div className="px-6 py-5 border-b border-[#2a2a2a] flex items-center justify-between">
+          <h2 className="text-lg font-semibold flex items-center gap-3 text-white">
+            <ShoppingBag className="w-5 h-5 text-[#c8a96e]" />
+            Your Cart <span className="text-[#c8a96e]">({items.length})</span>
           </h2>
           <button
             onClick={toggleCart}
-            className="p-2 -mr-2 text-gray-400 hover:text-black transition-colors"
+            className="p-2 -mr-2 text-neutral-500 hover:text-white transition-colors hover:rotate-90 duration-300"
           >
             <X className="w-5 h-5" />
           </button>
@@ -42,28 +43,33 @@ export function Cart() {
         {/* Cart Items */}
         <div className="flex-1 overflow-y-auto p-6">
           {items.length === 0 || !cart ? (
-            <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
-              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                <ShoppingBag className="w-8 h-8 text-gray-300" />
+            <div className="h-full flex flex-col items-center justify-center text-center space-y-5">
+              <div className="w-20 h-20 bg-[#141414] border border-[#2a2a2a] flex items-center justify-center">
+                <ShoppingBag className="w-8 h-8 text-neutral-600" />
               </div>
               <div>
-                <p className="text-gray-900 font-medium">Your cart is empty</p>
-                <p className="text-gray-500 text-sm mt-1">
+                <p className="text-white font-medium text-lg">Your cart is empty</p>
+                <p className="text-neutral-500 text-sm mt-2">
                   Looks like you haven&apos;t added anything yet.
                 </p>
               </div>
               <button
                 onClick={toggleCart}
-                className="mt-4 px-6 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                className="mt-4 px-8 py-3 bg-[#c8a96e] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#d4b87a] transition-all duration-300 flex items-center gap-2 group"
               >
                 Continue Shopping
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           ) : (
             <div className="space-y-6">
-              {items.map((item) => (
-                <div key={item.product_id} className="flex gap-4">
-                  <div className="relative w-20 h-24 bg-gray-50 rounded-md overflow-hidden shrink-0">
+              {items.map((item, index) => (
+                <div 
+                  key={item.product_id} 
+                  className="flex gap-4 p-3 bg-[#141414] border border-[#2a2a2a] hover:border-[#3a3a3a] transition-colors"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className="relative w-20 h-24 bg-[#0a0a0a] overflow-hidden shrink-0">
                     <Image
                       src={item.product_image ?? ""}
                       alt={item.product_name ?? ""}
@@ -74,13 +80,13 @@ export function Cart() {
 
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="flex justify-between items-start">
-                        <h3 className="text-sm font-medium text-gray-900 line-clamp-1">
+                      <div className="flex justify-between items-start gap-2">
+                        <h3 className="text-sm font-medium text-white line-clamp-1">
                           {item.product_name}
                         </h3>
                         <button
                           onClick={() => removeFromCart(item.product_id)}
-                          className="text-gray-400 hover:text-red-500 transition-colors"
+                          className="text-neutral-500 hover:text-red-500 transition-colors p-1 hover:bg-[#2a2a2a]"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -88,7 +94,7 @@ export function Cart() {
                     </div>
 
                     <div className="flex items-center justify-between mt-4">
-                      <div className="flex items-center border rounded-md">
+                      <div className="flex items-center border border-[#2a2a2a]">
                         <button
                           onClick={() =>
                             updateQuantity(
@@ -96,23 +102,23 @@ export function Cart() {
                               Math.max(0, item.quantity - 1),
                             )
                           }
-                          className="p-1 hover:bg-gray-50 transition-colors"
+                          className="p-2 hover:bg-[#2a2a2a] transition-colors text-neutral-400 hover:text-white"
                         >
                           <Minus className="w-4 h-4" />
                         </button>
-                        <span className="w-8 text-center text-sm font-medium">
+                        <span className="w-10 text-center text-sm font-medium text-white">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() =>
                             updateQuantity(item.product_id, item.quantity + 1)
                           }
-                          className="p-1 hover:bg-gray-50 transition-colors"
+                          className="p-2 hover:bg-[#2a2a2a] transition-colors text-neutral-400 hover:text-white"
                         >
                           <Plus className="w-4 h-4" />
                         </button>
                       </div>
-                      <span className="font-semibold text-sm">
+                      <span className="font-semibold text-sm text-[#c8a96e]">
                         ${((item.price ?? 0) * item.quantity).toFixed(2)}
                       </span>
                     </div>
@@ -125,21 +131,29 @@ export function Cart() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t p-6 bg-gray-50 space-y-4">
-            <div className="flex items-center justify-between text-base font-medium text-gray-900">
-              <p>Subtotal</p>
-              <p>${(cart?.total ?? total).toFixed(2)}</p>
+          <div className="border-t border-[#2a2a2a] p-6 bg-[#141414] space-y-4">
+            <div className="flex items-center justify-between text-base font-medium">
+              <p className="text-neutral-400">Subtotal</p>
+              <p className="text-white text-xl">${(cart?.total ?? total).toFixed(2)}</p>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-neutral-500">
               Shipping and taxes calculated at checkout.
             </p>
-            <div className="mt-6">
-              <a
+            <div className="mt-6 space-y-3">
+              <Link
                 href="/checkout"
-                className="flex items-center justify-center w-full rounded-md border border-transparent bg-black px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-800 transition-colors"
+                onClick={toggleCart}
+                className="group flex items-center justify-center w-full bg-[#c8a96e] px-6 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-[#d4b87a] transition-all duration-300"
               >
                 Checkout
-              </a>
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <button
+                onClick={toggleCart}
+                className="w-full py-3 border border-[#2a2a2a] text-neutral-400 text-sm hover:border-[#c8a96e] hover:text-[#c8a96e] transition-all duration-300"
+              >
+                Continue Shopping
+              </button>
             </div>
           </div>
         )}

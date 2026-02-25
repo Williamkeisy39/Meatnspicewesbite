@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-start">
                     {/* Image Gallery */}
-                    <div className="relative aspect-[4/5] bg-secondary/10 rounded-2xl overflow-hidden">
+                    <div className="relative aspect-4/5 bg-secondary/10 rounded-2xl overflow-hidden">
                         <Image
                             src={product.image}
                             alt={product.name}

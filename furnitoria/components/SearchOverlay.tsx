@@ -56,7 +56,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[60] flex flex-col bg-background/95 backdrop-blur-xl">
+                <div className="fixed inset-0 z-60 flex flex-col bg-background/95 backdrop-blur-xl">
                     {/* Header / Input Area */}
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}

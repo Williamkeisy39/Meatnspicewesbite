@@ -3,7 +3,7 @@ import { DM_Sans, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
 import { Cart } from "@/components/features/cart/Cart";
-import { TopBar } from "@/components/common/TopBar";
+
 import { Navbar } from "@/components/common/Navbar";
 import { MetaUpdater } from "@/components/common/MetaUpdater";
 import { QueryProvider } from "@/lib/providers/query-provider";
@@ -35,12 +35,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${cormorant.variable} font-[family-name:var(--font-sans)] antialiased`}>
+      <body className={`${dmSans.variable} ${cormorant.variable} font-sans antialiased`}>
         <QueryProvider>
           <StoreProvider>
             <CartProvider>
               <MetaUpdater />
-              <TopBar />
               <Navbar />
               <main>{children}</main>
               <Footer />

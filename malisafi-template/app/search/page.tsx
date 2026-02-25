@@ -73,15 +73,15 @@ function SearchContent() {
     const activeCategory = categoryId || "All";
 
     return (
-        <div className="min-h-screen bg-[var(--background)] pt-32 pb-20">
+        <div className="min-h-screen bg-background pt-32 pb-20">
             <div className="container mx-auto px-6 lg:px-12">
 
                 {/* Header Section */}
                 <div className="flex flex-col items-center mb-10 animate-slide-up">
-                    <p className="text-xs font-bold tracking-luxury text-[var(--color-accent)] mb-4 uppercase">
+                    <p className="text-xs font-bold tracking-luxury text-(--color-accent) mb-4 uppercase">
                         Search & Filter
                     </p>
-                    <h1 className="text-5xl md:text-7xl font-serif text-[var(--foreground)] mb-8 text-center">
+                    <h1 className="text-5xl md:text-7xl font-serif text-foreground mb-8 text-center">
                         Find Your Essentials
                     </h1>
 
@@ -92,11 +92,11 @@ function SearchContent() {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Search for products..."
-                            className="w-full bg-transparent border-b border-[var(--color-border)] py-4 text-xl md:text-2xl font-serif placeholder:text-[var(--color-muted-foreground)] focus:outline-none focus:border-[var(--color-accent)] transition-colors text-center"
+                            className="w-full bg-transparent border-b border-(--color-border) py-4 text-xl md:text-2xl font-serif placeholder:text-(--color-muted-foreground) focus:outline-none focus:border-(--color-accent) transition-colors text-center"
                         />
                         <button
                             type="submit"
-                            className="absolute right-0 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] hover:text-[var(--color-accent)] transition-colors"
+                            className="absolute right-0 top-1/2 -translate-y-1/2 text-(--color-muted-foreground) hover:text-(--color-accent) transition-colors"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="11" cy="11" r="8" />
@@ -108,7 +108,7 @@ function SearchContent() {
             </div>
 
             {/* Filters Toolbar - Static */}
-            <div className="w-full border-b border-[var(--color-border)] mb-10 animate-fade-in delay-100">
+            <div className="w-full border-b border-(--color-border) mb-10 animate-fade-in delay-100">
                 <div className="container mx-auto px-6 lg:px-12 py-4">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
 
@@ -117,8 +117,8 @@ function SearchContent() {
                             <button
                                 onClick={clearFilters}
                                 className={`whitespace-nowrap px-5 py-2 rounded-full text-xs uppercase tracking-widest transition-all duration-300 border ${activeCategory === "All"
-                                    ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
-                                    : "bg-transparent border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+                                    ? "bg-(--color-primary) text-white border-(--color-primary)"
+                                    : "bg-transparent border-(--color-border) text-(--color-muted-foreground) hover:border-(--color-primary) hover:text-(--color-foreground)"
                                     }`}
                             >
                                 All
@@ -128,8 +128,8 @@ function SearchContent() {
                                     key={cat.id}
                                     onClick={() => handleCategoryClick({ id: cat.id, name: cat.name })}
                                     className={`whitespace-nowrap px-5 py-2 rounded-full text-xs uppercase tracking-widest transition-all duration-300 border ${activeCategory === cat.id
-                                        ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
-                                        : "bg-transparent border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+                                        ? "bg-(--color-primary) text-white border-(--color-primary)"
+                                        : "bg-transparent border-(--color-border) text-(--color-muted-foreground) hover:border-(--color-primary) hover:text-(--color-foreground)"
                                         }`}
                                 >
                                     {cat.name}
@@ -143,14 +143,14 @@ function SearchContent() {
                             {/* Price Toggle */}
                             <div className="relative group">
                                 <button
-                                    className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-[var(--color-accent)] transition-colors py-2"
+                                    className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-(--color-accent) transition-colors py-2"
                                 >
                                     <span>Price</span>
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                                 </button>
 
                                 {/* Price Dropdown */}
-                                <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-[var(--color-border)] p-6 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                                <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-(--color-border) p-6 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                                     <div className="flex justify-between text-xs mb-4 font-medium">
                                         <span>${priceRange[0]}</span>
                                         <span>${priceRange[1]}</span>
@@ -162,23 +162,23 @@ function SearchContent() {
                                         step={10}
                                         value={priceRange[1]}
                                         onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
-                                        className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[var(--color-primary)]"
+                                        className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-(--color-primary)"
                                     />
                                     <div className="mt-4 text-center">
-                                        <p className="text-xs text-[var(--color-muted-foreground)]">Max Price: <span className="text-[var(--foreground)] font-bold">${priceRange[1]}</span></p>
+                                        <p className="text-xs text-(--color-muted-foreground)">Max Price: <span className="text-foreground font-bold">${priceRange[1]}</span></p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="w-px h-4 bg-[var(--color-border)]"></div>
+                            <div className="w-px h-4 bg-(--color-border)"></div>
 
                             {/* Sort Dropdown */}
                             <div className="relative flex items-center">
-                                <span className="text-xs text-[var(--color-muted-foreground)] mr-2 hidden sm:inline">Sort:</span>
+                                <span className="text-xs text-(--color-muted-foreground) mr-2 hidden sm:inline">Sort:</span>
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    className="bg-transparent text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[var(--color-accent)] transition-colors pr-2 text-right appearance-none"
+                                    className="bg-transparent text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-(--color-accent) transition-colors pr-2 text-right appearance-none"
                                 >
                                     <option value="featured">Featured</option>
                                     <option value="price-asc">Low to High</option>
@@ -194,8 +194,8 @@ function SearchContent() {
             <div className="container mx-auto px-6 lg:px-12">
                 {/* Results Info */}
                 <div className="flex justify-between items-end mb-8 animate-fade-in delay-200">
-                    <p className="text-sm font-serif text-[var(--color-muted-foreground)]">
-                        Showing <span className="text-[var(--foreground)] font-semibold">{filteredProducts.length}</span> results
+                    <p className="text-sm font-serif text-(--color-muted-foreground)">
+                        Showing <span className="text-foreground font-semibold">{filteredProducts.length}</span> results
                         {query && <span> for &ldquo;{query}&rdquo;</span>}
                     </p>
                 </div>
@@ -216,19 +216,19 @@ function SearchContent() {
                 ) : (
                     /* Empty State */
                     <div className="flex flex-col items-center justify-center py-32 animate-fade-in text-center">
-                        <div className="w-24 h-24 rounded-full bg-[var(--color-secondary)] flex items-center justify-center mb-6 text-[var(--color-muted-foreground)]">
+                        <div className="w-24 h-24 rounded-full bg-(--color-secondary) flex items-center justify-center mb-6 text-(--color-muted-foreground)">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="m21 21-4.3-4.3" />
                             </svg>
                         </div>
-                        <h3 className="text-3xl font-serif text-[var(--foreground)] mb-3">No matches found</h3>
-                        <p className="text-[var(--color-muted-foreground)] mb-8 max-w-md">
+                        <h3 className="text-3xl font-serif text-foreground mb-3">No matches found</h3>
+                        <p className="text-(--color-muted-foreground) mb-8 max-w-md">
                             We couldn't find any products matching your criteria. Try adjusting your filters or search terms.
                         </p>
                         <button
                             onClick={clearFilters}
-                            className="px-8 py-3 bg-[var(--color-primary)] text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[var(--color-accent)] transition-all duration-300"
+                            className="px-8 py-3 bg-(--color-primary) text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-(--color-accent) transition-all duration-300"
                         >
                             Clear All Filters
                         </button>
@@ -242,10 +242,10 @@ function SearchContent() {
 export default function SearchPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen pt-32 flex items-center justify-center bg-[var(--background)]">
+            <div className="min-h-screen pt-32 flex items-center justify-center bg-background">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-2 border-[var(--color-border)] border-t-[var(--color-accent)] rounded-full animate-spin"></div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-muted-foreground)]">Loading Collection...</p>
+                    <div className="w-12 h-12 border-2 border-(--color-border) border-t-(--color-accent) rounded-full animate-spin"></div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-(--color-muted-foreground)">Loading Collection...</p>
                 </div>
             </div>
         }>

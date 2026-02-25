@@ -23,7 +23,7 @@ export default function Footer() {
                     {/* Brand Column */}
                     <div className="lg:col-span-2 space-y-8 pr-12">
                         <Link href="/" className="font-serif text-4xl tracking-tight block mb-6">
-                            {storeName}<span className="text-[#C6A87C]">.</span>
+                            {storeName}<span className="text-accent">.</span>
                         </Link>
                         {storeAddress && (
                             <p className="text-gray-400 font-light leading-relaxed max-w-sm">
@@ -33,7 +33,7 @@ export default function Footer() {
                         {socials.length > 0 && (
                             <div className="flex gap-6 pt-4">
                                 {socials.map((social) => (
-                                    <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer" className="text-xs uppercase tracking-widest text-[#C6A87C] hover:text-white transition-colors">
+                                    <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer" className="text-xs uppercase tracking-widest text-accent hover:text-white transition-colors">
                                         {social.name}
                                     </a>
                                 ))}
@@ -43,7 +43,7 @@ export default function Footer() {
 
                     {/* Categories Column */}
                     <div className="space-y-6">
-                        <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[#C6A87C] mb-6">Shop</h4>
+                        <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-6">Shop</h4>
                         <ul className="space-y-4 text-sm text-gray-400 font-medium">
                             <li>
                                 <Link href="/search" className="hover:text-white transition-colors block py-0.5">
@@ -62,7 +62,7 @@ export default function Footer() {
 
                     {/* Contact Column */}
                     <div className="space-y-6">
-                        <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[#C6A87C] mb-6">Contact</h4>
+                        <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-6">Contact</h4>
                         <ul className="space-y-4 text-sm text-gray-400 font-medium">
                             {storeEmail && (
                                 <li>
@@ -88,7 +88,7 @@ export default function Footer() {
 
                     {/* Newsletter Column */}
                     <div className="lg:col-span-2 bg-white/5 p-8 -mx-8 sm:mx-0 sm:rounded-none">
-                        <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[#C6A87C] mb-4">
+                        <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
                             Stay Updated
                         </h4>
                         <p className="text-sm text-gray-400 mb-6 font-light">
@@ -98,11 +98,11 @@ export default function Footer() {
                             <input
                                 type="email"
                                 placeholder="Email Address"
-                                className="w-full bg-transparent border-b border-gray-600 px-0 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#C6A87C] transition-colors"
+                                className="w-full bg-transparent border-b border-gray-600 px-0 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-accent transition-colors"
                             />
                             <button
                                 type="submit"
-                                className="w-full py-4 bg-[#C6A87C] text-white text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+                                className="w-full py-4 bg-accent text-white text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
                             >
                                 Subscribe
                             </button>

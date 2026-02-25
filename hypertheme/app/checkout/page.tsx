@@ -47,6 +47,11 @@ export default function CheckoutPage() {
     return sum + price * item.quantity;
   }, 0);
 
+    const vatRate = config?.vat_enabled ? config.vat_rate : 0;
+    const tax = subtotal * (vatRate / 100);
+    const total = subtotal + tax;
+    const showTax = vatRate > 0;
+
   const breadcrumbs = [
     { label: "Home", href: "/" },
     { label: "Cart", href: "/cart" },
@@ -68,7 +73,7 @@ export default function CheckoutPage() {
   };
 
   const handlePaystackInline = async () => {
-    const amountInKobo = Math.round(subtotal * 100);
+    const amountInKobo = Math.round(total * 100);
 
     try {
       await duka.payments.payInline({
@@ -430,9 +435,15 @@ export default function CheckoutPage() {
 
                 <div className="border-t border-gray-100 pt-4 space-y-2 text-sm">
                   <div className="flex justify-between text-gray-600">
-                    <span>Items ({itemCount})</span>
+                    <span>Subtotal ({itemCount} items)</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
+                  {showTax && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Tax ({Math.round(vatRate)}%)</span>
+                      <span>{formatPrice(tax)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-gray-600">
                     <span>Shipping</span>
                     <span className="text-green-600">Free</span>
@@ -442,7 +453,7 @@ export default function CheckoutPage() {
                 <div className="border-t border-gray-100 mt-3 pt-3">
                   <div className="flex justify-between font-bold text-gray-900 text-lg">
                     <span>Total</span>
-                    <span>{formatPrice(subtotal)}</span>
+                    <span>{formatPrice(total)}</span>
                   </div>
                 </div>
 

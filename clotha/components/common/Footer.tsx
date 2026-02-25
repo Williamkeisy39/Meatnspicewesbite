@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Phone, MapPin } from "lucide-react";
 import { useStore } from "@/lib/providers/store-provider";
 import { useCategories } from "@/lib/hooks";
+import { useEffect, useRef, useState } from "react";
 
 const HELP_LINKS = [
   { label: "Track Your Order", href: "/track" },
@@ -20,67 +21,82 @@ const SOCIAL = [
 ];
 
 export function Footer() {
-  const { storeName, storeEmail, storePhone, storeAddress } = useStore();
+  const { storeName, storePhone, storeAddress } = useStore();
   const { data: categories = [] } = useCategories({ is_active: "true" });
+  const [isVisible, setIsVisible] = useState(false);
+  const footerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (footerRef.current) observer.observe(footerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <footer className="bg-gray-900 text-gray-400 mt-0">
+    <footer ref={footerRef} className="bg-[#0a0a0a] text-neutral-400 border-t border-[#2a2a2a]">
       {/* Top */}
-      <div className="max-w-[1280px] mx-auto px-5 pt-14 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className={`max-w-[1280px] mx-auto px-5 pt-16 pb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         {/* Brand */}
-        <div className="space-y-5">
-          <Link href="/" className="font-extrabold text-xl text-white tracking-tight block">
-            {storeName}
+        <div className="space-y-6">
+          <Link href="/" className="font-display text-2xl text-white tracking-tight block hover:text-[#c8a96e] transition-colors">
+            {storeName}<span className="text-[#c8a96e]">.</span>
           </Link>
-          <div className="flex gap-2">
+          <p className="text-sm text-neutral-500 leading-relaxed">
+            Elevating your style with curated fashion pieces. Quality meets sophistication.
+          </p>
+          <div className="flex gap-3">
             {SOCIAL.map(({ icon: Icon, href, label }) => (
               <a
                 key={label}
                 href={href}
                 aria-label={label}
-                className="w-8 h-8 border border-white/10 flex items-center justify-center text-gray-500 hover:border-[#cc1111] hover:text-[#cc1111] transition-all"
+                className="w-10 h-10 border border-[#2a2a2a] flex items-center justify-center text-neutral-500 hover:border-[#c8a96e] hover:text-[#c8a96e] hover:bg-[#141414] transition-all duration-300 hover:scale-110"
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-4 h-4" />
               </a>
             ))}
           </div>
-          <ul className="space-y-2.5 text-sm">
+          <ul className="space-y-3 text-sm">
             {storeAddress && (
-              <li className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 shrink-0 text-[#cc1111] mt-0.5" />
-                {storeAddress}
+              <li className="flex items-start gap-3">
+                <MapPin className="w-4 h-4 shrink-0 text-[#c8a96e] mt-0.5" />
+                <span className="text-neutral-400">{storeAddress}</span>
               </li>
             )}
             {storePhone && (
-              <li className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 shrink-0 text-[#cc1111]" />
-                <a href={`tel:${storePhone}`} className="hover:text-[#cc1111] transition-colors">{storePhone}</a>
-              </li>
-            )}
-            {storeEmail && (
-              <li className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 shrink-0 text-[#cc1111]" />
-                <a href={`mailto:${storeEmail}`} className="hover:text-[#cc1111] transition-colors">
-                  {storeEmail}
-                </a>
+              <li className="flex items-center gap-3">
+                <Phone className="w-4 h-4 shrink-0 text-[#c8a96e]" />
+                <a href={`tel:${storePhone}`} className="hover:text-[#c8a96e] transition-colors">{storePhone}</a>
               </li>
             )}
           </ul>
         </div>
 
         {/* Shop — real categories */}
-        <div>
-          <h4 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">Shop</h4>
-          <ul className="space-y-2.5">
+        <div className={`transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <h4 className="text-white font-semibold text-xs uppercase tracking-[0.2em] mb-6">Shop</h4>
+          <ul className="space-y-3">
             <li>
-              <Link href="/search?q=" className="text-sm hover:text-white transition-colors">All Products</Link>
+              <Link href="/search?q=" className="text-sm text-neutral-400 hover:text-[#c8a96e] transition-colors flex items-center gap-2 group">
+                <span className="w-0 group-hover:w-2 h-px bg-[#c8a96e] transition-all duration-300" />
+                All Products
+              </Link>
             </li>
             {categories.slice(0, 5).map((cat) => (
               <li key={cat.id}>
                 <Link
                   href={`/search?q=${encodeURIComponent(cat.name)}`}
-                  className="text-sm hover:text-white transition-colors"
+                  className="text-sm text-neutral-400 hover:text-[#c8a96e] transition-colors flex items-center gap-2 group"
                 >
+                  <span className="w-0 group-hover:w-2 h-px bg-[#c8a96e] transition-all duration-300" />
                   {cat.name}
                 </Link>
               </li>
@@ -89,52 +105,29 @@ export function Footer() {
         </div>
 
         {/* Quick Links */}
-        <div>
-          <h4 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">Quick Links</h4>
-          <ul className="space-y-2.5">
+        <div className={`transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <h4 className="text-white font-semibold text-xs uppercase tracking-[0.2em] mb-6">Quick Links</h4>
+          <ul className="space-y-3">
             {HELP_LINKS.map((l) => (
               <li key={l.label}>
-                <Link href={l.href} className="text-sm hover:text-white transition-colors">{l.label}</Link>
+                <Link href={l.href} className="text-sm text-neutral-400 hover:text-[#c8a96e] transition-colors flex items-center gap-2 group">
+                  <span className="w-0 group-hover:w-2 h-px bg-[#c8a96e] transition-all duration-300" />
+                  {l.label}
+                </Link>
               </li>
             ))}
           </ul>
         </div>
-
-        {/* Newsletter */}
-        <div>
-          <h4 className="text-white font-semibold text-xs uppercase tracking-[0.15em] mb-5">Stay Updated</h4>
-          <p className="text-sm text-gray-500 mb-4 leading-relaxed">
-            Subscribe to receive updates on new arrivals and exclusive offers.
-          </p>
-          <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
-            <input
-              type="email"
-              placeholder="Email address"
-              className="w-full bg-transparent border-b border-gray-600 px-0 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#cc1111] transition-colors"
-            />
-            <button
-              type="submit"
-              className="w-full py-3 bg-[#cc1111] text-white text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
-            >
-              Subscribe
-            </button>
-          </form>
-        </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/5">
-        <div className="max-w-[1280px] mx-auto px-5 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-600">© {new Date().getFullYear()} {storeName}. All rights reserved.</p>
-          <div className="flex gap-5 text-xs text-gray-600">
-            {["Privacy Policy", "Terms of Service"].map((t) => (
-              <Link key={t} href="#" className="hover:text-white transition-colors">{t}</Link>
-            ))}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-gray-600">
+      <div className="border-t border-[#2a2a2a]">
+        <div className={`max-w-[1280px] mx-auto px-5 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-700 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+          <p className="text-xs text-neutral-600">© {new Date().getFullYear()} {storeName}. All rights reserved.</p>
+          <div className="flex items-center gap-2 text-xs text-neutral-600">
             <span>Pay with:</span>
             {["VISA", "MC", "AMEX", "Paystack"].map((p) => (
-              <span key={p} className="px-2 py-0.5 border border-white/10 text-[10px] font-medium">{p}</span>
+              <span key={p} className="px-2 py-1 border border-[#2a2a2a] text-[10px] font-medium text-neutral-500">{p}</span>
             ))}
           </div>
         </div>

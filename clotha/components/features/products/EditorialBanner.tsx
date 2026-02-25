@@ -9,14 +9,14 @@ export function EditorialBanner() {
                     {/* Left — tall card */}
                     <Link
                         href="/women"
-                        className="group relative rounded-3xl overflow-hidden aspect-[3/4] md:aspect-auto md:min-h-[560px] block card-lift"
+                        className="group relative rounded-3xl overflow-hidden aspect-3/4 md:aspect-auto md:min-h-[560px] block card-lift"
                     >
                         <img
                             src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=85"
                             alt="Women's collection"
                             className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                         <div className="absolute bottom-8 left-8 right-8 text-white">
                             <p className="text-xs uppercase tracking-[0.2em] text-white/60 mb-2">
                                 Women's
@@ -42,7 +42,7 @@ export function EditorialBanner() {
                                 alt="Men's collection"
                                 className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
                             <div className="absolute bottom-6 left-6 right-6 text-white">
                                 <p className="text-xs uppercase tracking-widest text-white/60 mb-1">Men's</p>
                                 <h3 className="font-display text-2xl font-bold mb-3">
@@ -63,7 +63,7 @@ export function EditorialBanner() {
                                 alt="Accessories"
                                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
                             <div className="absolute bottom-6 left-6 right-6 text-white">
                                 <p className="text-xs uppercase tracking-widest text-white/60 mb-1">
                                     Accessories

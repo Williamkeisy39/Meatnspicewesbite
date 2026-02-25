@@ -68,14 +68,14 @@ export function CategoriesGrid() {
                     {/* Wide card */}
                     <Link
                         href={CATEGORIES[0].href}
-                        className="group relative col-span-2 row-span-2 rounded-2xl overflow-hidden aspect-[4/3] md:aspect-auto min-h-[320px] card-lift"
+                        className="group relative col-span-2 row-span-2 rounded-2xl overflow-hidden aspect-4/3 md:aspect-auto min-h-[320px] card-lift"
                     >
                         <img
                             src={CATEGORIES[0].image}
                             alt={CATEGORIES[0].name}
                             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
                         <div className="absolute bottom-6 left-6 text-white">
                             <p className="text-xs uppercase tracking-widest text-white/70 mb-1">
                                 {CATEGORIES[0].count}
@@ -101,7 +101,7 @@ export function CategoriesGrid() {
                                 alt={cat.name}
                                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                            <div className="absolute inset-0 bg-linear-to-t from-black/65 via-black/10 to-transparent" />
                             {cat.badge && (
                                 <span className="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full">
                                     {cat.badge}

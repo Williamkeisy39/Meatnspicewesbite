@@ -74,6 +74,22 @@ export function useBestSellingProducts(skip?: number) {
     });
 }
 
+export function useNewArrivals(limit?: number) {
+    return useQuery({
+        queryKey: ["products-new-arrivals", limit],
+        queryFn: async () => {
+            // Try to get newest products by using a recent date filter
+            // or just fetch all and they'll typically be sorted newest first
+            const products = await duka.products.list({ 
+                is_active: "true",
+                per_page: limit || 8,
+            });
+            return products;
+        },
+        staleTime: 1000 * 60 * 5,
+    });
+}
+
 // ── Banners ──
 
 export function useBanners(params?: BannerGetParams) {
@@ -116,3 +132,5 @@ export function useVerifyPayment() {
         mutationFn: (params: VerifyPaymentParams) => duka.payments.verify(params),
     });
 }
+
+

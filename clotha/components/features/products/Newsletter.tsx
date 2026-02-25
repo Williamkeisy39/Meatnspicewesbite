@@ -22,7 +22,7 @@ export function Newsletter() {
                         'url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=70")',
                 }}
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0f0f0f] via-[#0f0f0f]/90 to-[#1a1208]" />
+            <div className="absolute inset-0 bg-linear-to-br from-[#0f0f0f] via-[#0f0f0f]/90 to-[#1a1208]" />
 
             <div className="relative max-w-3xl mx-auto px-6 text-center">
                 <p className="text-[#c8a96e] text-xs font-semibold uppercase tracking-[0.3em] mb-5">

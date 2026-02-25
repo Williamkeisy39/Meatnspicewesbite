@@ -13,8 +13,8 @@ export function Hero() {
         }}
       >
         {/* layered gradients for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-black/10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/50 to-black/10" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-black/20" />
       </div>
 
       {/* ── Content ── */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,7 @@ import { useStore } from "@/lib/providers/store-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { duka } from "@/lib/duka";
 import { PaymentMethod } from "@valebytes/topduka-node";
-import { Lock, ChevronLeft } from "lucide-react";
+import { Lock, ChevronLeft, ArrowRight, CheckCircle } from "lucide-react";
 
 export default function CheckoutPage() {
   const { cart, isLoading, itemCount } = useCartContext();
@@ -21,6 +21,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [processing, setProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const [form, setForm] = useState({
     full_name: "",
@@ -33,6 +34,10 @@ export default function CheckoutPage() {
     postal_code: "",
     country: "",
   });
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   const { data: paystackConfig } = useQuery({
     queryKey: ["paystack-config"],
@@ -50,6 +55,11 @@ export default function CheckoutPage() {
     const price = item.price ?? 0;
     return sum + price * item.quantity;
   }, 0);
+
+  const vatRate = config?.vat_enabled ? config.vat_rate : 0;
+  const tax = subtotal * (vatRate / 100);
+  const total = subtotal + tax;
+  const showTax = vatRate > 0;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -78,7 +88,7 @@ export default function CheckoutPage() {
   };
 
   const handlePaystackInline = async () => {
-    const amountInKobo = Math.round(subtotal * 100);
+    const amountInKobo = Math.round(total * 100);
     try {
       await duka.payments.payInline({
         email: form.email,
@@ -142,25 +152,24 @@ export default function CheckoutPage() {
 
   if (orderSuccess) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-10 shadow-sm max-w-md w-full text-center space-y-6">
-          <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-4">
+        <div className={`bg-[#141414] border border-[#2a2a2a] p-10 max-w-md w-full text-center space-y-6 transition-all duration-700 ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+          <div className="w-20 h-20 bg-[#c8a96e]/10 border border-[#c8a96e]/30 flex items-center justify-center mx-auto">
+            <CheckCircle className="w-10 h-10 text-[#c8a96e]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Order Placed!</h1>
-            {orderRef && <p className="text-xs font-mono text-gray-400 mt-1">Ref: {orderRef}</p>}
-            <p className="text-gray-500 mt-2 text-sm">
+            <h1 className="text-2xl font-bold text-white font-display">Order Placed!</h1>
+            {orderRef && <p className="text-xs font-mono text-neutral-500 mt-2">Ref: {orderRef}</p>}
+            <p className="text-neutral-400 mt-3 text-sm">
               Thank you for your purchase. Your order has been received and is being processed.
             </p>
           </div>
           <button
             onClick={() => router.push("/search?q=")}
-            className="w-full bg-black text-white py-4 text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors"
+            className="group w-full bg-[#c8a96e] text-black py-4 text-xs font-bold uppercase tracking-widest hover:bg-[#d4b87a] transition-all duration-300 flex items-center justify-center gap-2"
           >
             Continue Shopping
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>
@@ -169,20 +178,22 @@ export default function CheckoutPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-gray-200 border-t-black rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#2a2a2a] border-t-[#c8a96e] animate-spin" />
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="text-center space-y-6">
-          <div className="text-5xl">🛒</div>
-          <h1 className="text-2xl font-bold text-gray-900">Your cart is empty</h1>
-          <p className="text-gray-500 text-sm">Add some products to your cart first.</p>
-          <Link href="/search?q=" className="inline-block bg-black text-white px-8 py-3 text-sm font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors">
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-4">
+        <div className={`text-center space-y-6 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="w-20 h-20 bg-[#141414] border border-[#2a2a2a] flex items-center justify-center mx-auto">
+            <span className="text-4xl">🛒</span>
+          </div>
+          <h1 className="text-2xl font-bold text-white font-display">Your cart is empty</h1>
+          <p className="text-neutral-500 text-sm">Add some products to your cart first.</p>
+          <Link href="/search?q=" className="inline-block bg-[#c8a96e] text-black px-8 py-3 text-sm font-bold uppercase tracking-widest hover:bg-[#d4b87a] transition-all duration-300">
             Browse Products
           </Link>
         </div>
@@ -191,13 +202,13 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10">
+    <div className="min-h-screen bg-[#0a0a0a] py-10">
       <div className="max-w-6xl mx-auto px-4 lg:px-8">
-        <Link href="/" className="inline-flex items-center text-sm text-gray-500 hover:text-black mb-8 transition-colors">
+        <Link href="/" className={`inline-flex items-center text-sm text-neutral-500 hover:text-[#c8a96e] mb-8 transition-colors ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <ChevronLeft className="w-4 h-4 mr-1" /> Back to store
         </Link>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+        <h1 className={`text-3xl font-bold text-white mb-8 font-display transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>Checkout</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -206,82 +217,82 @@ export default function CheckoutPage() {
             <div className="lg:col-span-2 space-y-6">
 
               {/* Shipping Information */}
-              <div className="bg-white border border-gray-200 p-6">
-                <h2 className="text-base font-bold uppercase tracking-wider text-gray-900 mb-6 pb-3 border-b border-gray-100">
+              <div className={`bg-[#141414] border border-[#2a2a2a] p-6 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+                <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-[#c8a96e] mb-6 pb-4 border-b border-[#2a2a2a]">
                   Shipping Information
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Full Name *</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">Full Name *</label>
                     <input type="text" name="full_name" value={form.full_name} onChange={handleChange} required
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Email *</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">Email *</label>
                     <input type="email" name="email" value={form.email} onChange={handleChange} required
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Phone *</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">Phone *</label>
                     <input type="tel" name="phone_number" value={form.phone_number} onChange={handleChange} required
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Address Line 1 *</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">Address Line 1 *</label>
                     <input type="text" name="address_line1" value={form.address_line1} onChange={handleChange} required
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Address Line 2</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">Address Line 2</label>
                     <input type="text" name="address_line2" value={form.address_line2} onChange={handleChange}
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">City *</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">City *</label>
                     <input type="text" name="city" value={form.city} onChange={handleChange} required
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">State / Province</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">State / Province</label>
                     <input type="text" name="state_province" value={form.state_province} onChange={handleChange}
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Postal Code</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">Postal Code</label>
                     <input type="text" name="postal_code" value={form.postal_code} onChange={handleChange}
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Country *</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">Country *</label>
                     <input type="text" name="country" value={form.country} onChange={handleChange} required
-                      className="w-full border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors bg-white" />
+                      className="w-full bg-[#0a0a0a] border border-[#2a2a2a] px-4 py-3 text-sm outline-none focus:border-[#c8a96e] transition-colors text-white placeholder-neutral-600" />
                   </div>
                 </div>
               </div>
 
               {/* Payment Method */}
-              <div className="bg-white border border-gray-200 p-6">
-                <h2 className="text-base font-bold uppercase tracking-wider text-gray-900 mb-6 pb-3 border-b border-gray-100 flex items-center justify-between">
-                  Payment Method <Lock className="w-4 h-4 text-gray-400" />
+              <div className={`bg-[#141414] border border-[#2a2a2a] p-6 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+                <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-[#c8a96e] mb-6 pb-4 border-b border-[#2a2a2a] flex items-center justify-between">
+                  Payment Method <Lock className="w-4 h-4 text-neutral-500" />
                 </h2>
                 <div className="space-y-3">
                   {paystackConfig?.public_key && (
-                    <label className={`flex items-center gap-4 p-4 border cursor-pointer transition-all ${paymentMethod === "paystack" ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-300"}`}>
+                    <label className={`flex items-center gap-4 p-4 border cursor-pointer transition-all duration-300 ${paymentMethod === "paystack" ? "border-[#c8a96e] bg-[#c8a96e]/5" : "border-[#2a2a2a] hover:border-[#3a3a3a]"}`}>
                       <input type="radio" name="payment_method" value="paystack" checked={paymentMethod === "paystack"}
-                        onChange={(e) => setPaymentMethod(e.target.value)} className="accent-black" />
+                        onChange={(e) => setPaymentMethod(e.target.value)} className="accent-[#c8a96e]" />
                       <div className="flex-1">
-                        <span className="font-semibold text-sm text-gray-900">Pay with Paystack</span>
-                        <p className="text-xs text-gray-500 mt-0.5">Card, Bank Transfer, USSD, Mobile Money</p>
+                        <span className="font-semibold text-sm text-white">Pay with Paystack</span>
+                        <p className="text-xs text-neutral-500 mt-0.5">Card, Bank Transfer, USSD, Mobile Money</p>
                       </div>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8a96e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /></svg>
                     </label>
                   )}
-                  <label className={`flex items-center gap-4 p-4 border cursor-pointer transition-all ${paymentMethod === "cash" ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-300"}`}>
+                  <label className={`flex items-center gap-4 p-4 border cursor-pointer transition-all duration-300 ${paymentMethod === "cash" ? "border-[#c8a96e] bg-[#c8a96e]/5" : "border-[#2a2a2a] hover:border-[#3a3a3a]"}`}>
                     <input type="radio" name="payment_method" value="cash" checked={paymentMethod === "cash"}
-                      onChange={(e) => setPaymentMethod(e.target.value)} className="accent-black" />
+                      onChange={(e) => setPaymentMethod(e.target.value)} className="accent-[#c8a96e]" />
                     <div className="flex-1">
-                      <span className="font-semibold text-sm text-gray-900">Cash on Delivery</span>
-                      <p className="text-xs text-gray-500 mt-0.5">Pay when you receive your order</p>
+                      <span className="font-semibold text-sm text-white">Cash on Delivery</span>
+                      <p className="text-xs text-neutral-500 mt-0.5">Pay when you receive your order</p>
                     </div>
                   </label>
                 </div>
@@ -290,27 +301,26 @@ export default function CheckoutPage() {
 
             {/* Right: Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white border border-gray-200 p-6 lg:sticky lg:top-24">
-                <h2 className="text-base font-bold uppercase tracking-wider text-gray-900 mb-6 pb-3 border-b border-gray-100">
+              <div className={`bg-[#141414] border border-[#2a2a2a] p-6 lg:sticky lg:top-24 transition-all duration-700 delay-300 ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
+                <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-[#c8a96e] mb-6 pb-4 border-b border-[#2a2a2a]">
                   Order Summary
                 </h2>
 
-                <div className="space-y-4 max-h-64 overflow-y-auto mb-4">
+                <div className="space-y-4 max-h-64 overflow-y-auto mb-4 pr-2">
                   {items.map((item) => {
                     const price = item.price ?? 0;
                     return (
                       <div key={item.product_id} className="flex gap-3">
-                        <div className="w-14 h-14 bg-gray-100 shrink-0 overflow-hidden">
+                        <div className="w-14 h-14 bg-[#0a0a0a] border border-[#2a2a2a] shrink-0 overflow-hidden">
                           {item.product_image && (
-                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={item.product_image} alt="" className="w-full h-full object-cover" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-gray-900 line-clamp-1">{item.product_name}</p>
-                          <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                          <p className="text-xs font-medium text-white line-clamp-1">{item.product_name}</p>
+                          <p className="text-xs text-neutral-500">Qty: {item.quantity}</p>
                         </div>
-                        <span className="text-xs font-semibold text-gray-900 shrink-0">
+                        <span className="text-xs font-semibold text-[#c8a96e] shrink-0">
                           {formatPrice(price * item.quantity)}
                         </span>
                       </div>
@@ -318,26 +328,32 @@ export default function CheckoutPage() {
                   })}
                 </div>
 
-                <div className="border-t border-gray-100 pt-4 space-y-2 text-sm">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Items ({itemCount})</span>
+                <div className="border-t border-[#2a2a2a] pt-4 space-y-2 text-sm">
+                  <div className="flex justify-between text-neutral-400">
+                    <span>Subtotal ({itemCount} items)</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
-                  <div className="flex justify-between text-gray-600">
+                  {showTax && (
+                    <div className="flex justify-between text-neutral-400">
+                      <span>Tax ({Math.round(vatRate)}%)</span>
+                      <span>{formatPrice(tax)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-neutral-400">
                     <span>Shipping</span>
-                    <span className="text-green-600 font-medium">Free</span>
+                    <span className="text-[#c8a96e] font-medium">Free</span>
                   </div>
                 </div>
 
-                <div className="border-t border-gray-100 mt-3 pt-3">
-                  <div className="flex justify-between font-bold text-gray-900 text-lg">
+                <div className="border-t border-[#2a2a2a] mt-3 pt-3">
+                  <div className="flex justify-between font-bold text-white text-lg">
                     <span>Total</span>
-                    <span>{formatPrice(subtotal)}</span>
+                    <span>{formatPrice(total)}</span>
                   </div>
                 </div>
 
                 {error && (
-                  <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm">
+                  <div className="mt-4 p-3 bg-red-900/20 border border-red-500/30 text-red-400 text-sm">
                     {error}
                   </div>
                 )}
@@ -345,13 +361,13 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={processing}
-                  className="w-full mt-6 bg-black text-white py-4 text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="group w-full mt-6 bg-[#c8a96e] text-black py-4 text-xs font-bold uppercase tracking-widest hover:bg-[#d4b87a] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-[#c8a96e]/20"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   {processing ? "Processing..." : paymentMethod === "cash" ? "Place Order" : "Pay Now"}
                 </button>
 
-                <p className="text-xs text-gray-400 text-center mt-3">
+                <p className="text-xs text-neutral-600 text-center mt-3">
                   Your personal data will be used to process your order.
                 </p>
               </div>

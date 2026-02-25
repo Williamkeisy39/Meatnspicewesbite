@@ -16,7 +16,7 @@ export default function Hero() {
                     className="object-cover opacity-90"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent sm:bg-gradient-to-t sm:from-black/20 sm:to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-r from-black/40 via-transparent to-transparent sm:bg-linear-to-t sm:from-black/20 sm:to-transparent" />
             </div>
 
             {/* Content */}
@@ -28,7 +28,7 @@ export default function Hero() {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white drop-shadow-sm leading-[1.1]">
-                        Designed for <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 italic font-serif">Living.</span>
+                        Designed for <br /> <span className="text-transparent bg-clip-text bg-linear-to-r from-white to-white/70 italic font-serif">Living.</span>
                     </h1>
 
                     <p className="text-lg md:text-xl text-white/90 max-w-lg mx-auto md:mx-0 font-light leading-relaxed drop-shadow-md">
@@ -50,7 +50,7 @@ export default function Hero() {
             {/* Scroll Indicator */}
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 animate-bounce">
                 <span className="text-xs text-white/70 uppercase tracking-widest">Scroll</span>
-                <div className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"></div>
+                <div className="w-px h-12 bg-linear-to-b from-white to-transparent"></div>
             </div>
         </section>
     );

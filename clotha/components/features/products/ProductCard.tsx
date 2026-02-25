@@ -28,7 +28,7 @@ export function ProductCard({
   return (
     <div className="group flex flex-col gap-3">
       {/* Image container */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100 rounded-2xl">
+      <div className="relative aspect-3/4 overflow-hidden bg-neutral-100 rounded-2xl">
         <Image
           src={product.image}
           alt={product.name}
