@@ -178,17 +178,7 @@ export default function ProductPage({
               </div>
             </div>
 
-            {/* Product meta */}
-            <div className="grid grid-cols-2 gap-4 pt-8 mt-8 border-t border-[#2a2a2a]">
-              <div className="bg-[#141414] p-4 border border-[#2a2a2a]">
-                <span className="text-xs text-neutral-500 uppercase tracking-wider block mb-1">SKU</span>
-                <span className="text-sm text-white font-medium">{product.id.slice(0, 8).toUpperCase()}</span>
-              </div>
-              <div className="bg-[#141414] p-4 border border-[#2a2a2a]">
-                <span className="text-xs text-neutral-500 uppercase tracking-wider block mb-1">Category</span>
-                <span className="text-sm text-white font-medium">{product.category?.name || "Uncategorized"}</span>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
