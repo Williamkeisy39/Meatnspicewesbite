@@ -81,10 +81,9 @@ export function useNewArrivals(limit?: number) {
             // Try to get newest products by using a recent date filter
             // or just fetch all and they'll typically be sorted newest first
             const products = await duka.products.list({ 
-                is_active: "true",
-                per_page: limit || 8,
+                status: "active",
             });
-            return products;
+            return products.slice(0, limit || 8);
         },
         staleTime: 1000 * 60 * 5,
     });

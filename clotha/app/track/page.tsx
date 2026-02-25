@@ -201,7 +201,7 @@ export default function TrackPage() {
                                             <DollarSign className="w-4 h-4" />
                                             <span className="text-[10px] uppercase tracking-wider font-bold">Total</span>
                                         </div>
-                                        <p className="text-white">{formatPrice(order.total_amount)}</p>
+                                        <p className="text-white">{formatPrice(order.total)}</p>
                                     </div>
                                     <div className="bg-[#0a0a0a] p-4 border border-[#2a2a2a]">
                                         <div className="flex items-center gap-2 text-[#c8a96e] mb-2">
