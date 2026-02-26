@@ -1,19 +1,18 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { duka } from "@/lib/duka";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getProducts, getProduct, getPopularProducts, getDiscountedProducts, getBestSellingProducts, getNewArrivals } from "@/lib/actions/products";
+import { getCategories, getCategoryProducts } from "@/lib/actions/categories";
+import { getBanners } from "@/lib/actions/banners";
+import { getOrders, getOrder } from "@/lib/actions/orders";
+import { initializePayment, verifyPayment } from "@/lib/actions/payments";
 import type {
-    Product,
-    Category,
     ProductGetParams,
     CategoryGetParams,
     DiscountedProductsParams,
     BannerGetParams,
-    Order,
     InitializePaymentParams,
-    InitializePaymentResponse,
     VerifyPaymentParams,
-    VerifyPaymentResponse,
 } from "@valebytes/topduka-node";
 
 // ── Products ──
@@ -21,7 +20,16 @@ import type {
 export function useProducts(params?: ProductGetParams) {
     return useQuery({
         queryKey: ["products", params],
-        queryFn: () => duka.products.list(params),
+        queryFn: () => getProducts(params),
+        staleTime: 1000 * 60 * 5,
+    });
+}
+
+export function useProduct(id: string) {
+    return useQuery({
+        queryKey: ["product", id],
+        queryFn: () => getProduct(id),
+        enabled: !!id,
         staleTime: 1000 * 60 * 5,
     });
 }
@@ -29,15 +37,24 @@ export function useProducts(params?: ProductGetParams) {
 export function useCategories(params?: CategoryGetParams) {
     return useQuery({
         queryKey: ["categories", params],
-        queryFn: () => duka.categories.list(params),
+        queryFn: () => getCategories(params),
         staleTime: 1000 * 60 * 10,
+    });
+}
+
+export function useCategoryProducts(categoryId: string | undefined) {
+    return useQuery({
+        queryKey: ["category-products", categoryId],
+        queryFn: () => getCategoryProducts(categoryId!),
+        enabled: !!categoryId,
+        staleTime: 1000 * 60 * 5,
     });
 }
 
 export function usePopularProducts(skip?: number) {
     return useQuery({
         queryKey: ["products-popular", skip],
-        queryFn: () => duka.products.popular(skip),
+        queryFn: () => getPopularProducts(skip),
         staleTime: 1000 * 60 * 5,
     });
 }
@@ -45,7 +62,7 @@ export function usePopularProducts(skip?: number) {
 export function useDiscountedProducts(params?: DiscountedProductsParams) {
     return useQuery({
         queryKey: ["products-discounted", params],
-        queryFn: () => duka.products.discounted(params),
+        queryFn: () => getDiscountedProducts(params),
         staleTime: 1000 * 60 * 5,
     });
 }
@@ -53,7 +70,15 @@ export function useDiscountedProducts(params?: DiscountedProductsParams) {
 export function useBestSellingProducts(skip?: number) {
     return useQuery({
         queryKey: ["products-best-selling", skip],
-        queryFn: () => duka.products.bestSelling(skip),
+        queryFn: () => getBestSellingProducts(skip),
+        staleTime: 1000 * 60 * 5,
+    });
+}
+
+export function useNewArrivals(limit?: number) {
+    return useQuery({
+        queryKey: ["products-new-arrivals", limit],
+        queryFn: () => getNewArrivals(limit),
         staleTime: 1000 * 60 * 5,
     });
 }
@@ -63,7 +88,7 @@ export function useBestSellingProducts(skip?: number) {
 export function useBanners(params?: BannerGetParams) {
     return useQuery({
         queryKey: ["banners", params],
-        queryFn: () => duka.banners.list(params),
+        queryFn: () => getBanners(params),
         staleTime: 1000 * 60 * 10,
     });
 }
@@ -73,7 +98,7 @@ export function useBanners(params?: BannerGetParams) {
 export function useOrders(skip?: number) {
     return useQuery({
         queryKey: ["orders", skip],
-        queryFn: () => duka.orders.list(skip),
+        queryFn: () => getOrders(skip),
         staleTime: 1000 * 60 * 5,
     });
 }
@@ -81,7 +106,7 @@ export function useOrders(skip?: number) {
 export function useOrder(orderId: string) {
     return useQuery({
         queryKey: ["order", orderId],
-        queryFn: () => duka.orders.get(orderId),
+        queryFn: () => getOrder(orderId),
         enabled: !!orderId,
         staleTime: 1000 * 60 * 5,
     });
@@ -91,12 +116,14 @@ export function useOrder(orderId: string) {
 
 export function useInitializePayment() {
     return useMutation({
-        mutationFn: (params: InitializePaymentParams) => duka.payments.initialize(params),
+        mutationFn: (params: InitializePaymentParams) => initializePayment(params),
     });
 }
 
 export function useVerifyPayment() {
     return useMutation({
-        mutationFn: (params: VerifyPaymentParams) => duka.payments.verify(params),
+        mutationFn: (params: VerifyPaymentParams) => verifyPayment(params),
     });
 }
+
+

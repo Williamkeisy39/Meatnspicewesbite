@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { duka } from "@/lib/duka";
+import { getCart, createCart, updateCartProduct, deleteCart, getCartSessionId } from "@/lib/actions/cart";
 import type { Cart } from "@valebytes/topduka-node";
 
 interface CartContextValue {
@@ -37,31 +37,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const { data: cart, isLoading, error } = useQuery({
         queryKey: ["cart"],
-        queryFn: () => duka.cart.get(),
+        queryFn: () => getCart(),
         enabled: ready,
         staleTime: 1000 * 60 * 2,
         retry: false,
     });
 
     useEffect(() => {
-        const sid = duka.cart.getSessionId();
-        if (sid) {
-            setReady(true);
-        } else {
-            duka.cart.create().then(() => {
+        getCartSessionId().then((sid) => {
+            if (sid) {
                 setReady(true);
-            }).catch((e) => {
-                console.error("[Cart] Failed to create initial session:", e);
-            });
-        }
+            } else {
+                createCart().then(() => {
+                    setReady(true);
+                }).catch((e) => {
+                    console.error("[Cart] Failed to create initial session:", e);
+                });
+            }
+        });
     }, []);
 
     useEffect(() => {
         if (error && ready) {
             const axiosError = error as any;
             if (axiosError?.response?.status === 400) {
-                duka.cart.delete().then(() => {
-                    return duka.cart.create();
+                deleteCart().then(() => {
+                    return createCart();
                 }).then(() => {
                     queryClient.invalidateQueries({ queryKey: ["cart"] });
                 });
@@ -76,10 +77,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const addToCart = useCallback(async (productId: string, quantity: number = 1) => {
         setAddingProductId(productId);
         try {
-            if (!duka.cart.getSessionId()) {
-                await duka.cart.create();
+            const sid = await getCartSessionId();
+            if (!sid) {
+                await createCart();
             }
-            await duka.cart.updateProduct({ product_id: productId, quantity });
+            await updateCartProduct(productId, quantity);
             invalidateCart();
             setIsOpen(true);
         } catch (error) {
@@ -91,7 +93,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const updateQuantity = useCallback(async (productId: string, quantity: number) => {
         try {
-            await duka.cart.updateProduct({ product_id: productId, quantity });
+            await updateCartProduct(productId, quantity);
             invalidateCart();
         } catch (error) {
             console.error("[Cart] Failed to update quantity:", error);
@@ -100,7 +102,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const removeFromCart = useCallback(async (productId: string) => {
         try {
-            await duka.cart.updateProduct({ product_id: productId, quantity: 0 });
+            await updateCartProduct(productId, 0);
             invalidateCart();
         } catch (error) {
             console.error("[Cart] Failed to remove from cart:", error);

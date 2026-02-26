@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { duka } from "@/lib/duka";
+import { getStoreConfig, getStoreInfo } from "@/lib/actions/store";
 import type { StoreConfig, StoreInfo } from "@valebytes/topduka-node";
 
 interface StoreContextValue {
@@ -46,13 +46,13 @@ const currencySymbols: Record<string, string> = {
 export function StoreProvider({ children }: { children: React.ReactNode }) {
     const { data: config, isLoading: configLoading } = useQuery({
         queryKey: ["store-config"],
-        queryFn: () => duka.config.get(),
+        queryFn: () => getStoreConfig(),
         staleTime: 1000 * 60 * 10,
     });
 
     const { data: store, isLoading: storeLoading } = useQuery({
         queryKey: ["store-info"],
-        queryFn: () => duka.store.get(),
+        queryFn: () => getStoreInfo(),
         staleTime: 1000 * 60 * 10,
     });
 
