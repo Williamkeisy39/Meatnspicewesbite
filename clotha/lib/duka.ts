@@ -1,19 +1,31 @@
 import { createClient, TopDukaClient } from "@valebytes/topduka-node";
 
 let dukaInstance: TopDukaClient | null = null;
+let apiKeyPromise: Promise<string> | null = null;
 
-function getDukaClient(): TopDukaClient {
+async function getApiKey(): Promise<string> {
+  if (!apiKeyPromise) {
+    apiKeyPromise = fetch("/api/config")
+      .then((res) => res.json())
+      .then((data) => data.apiKey)
+      .catch(() => "");
+  }
+  return apiKeyPromise;
+}
+
+async function getDukaClient(): Promise<TopDukaClient> {
   if (!dukaInstance) {
-    dukaInstance = createClient({
-      apiKey: process.env.NEXT_PUBLIC_API_KEY!,
-    });
+    const apiKey = await getApiKey();
+    dukaInstance = createClient({ apiKey });
   }
   return dukaInstance;
 }
 
 export const duka = new Proxy({} as TopDukaClient, {
   get: (_, prop) => {
-    const client = getDukaClient();
-    return (client as any)[prop];
+    return async (...args: any[]) => {
+      const client = await getDukaClient();
+      return (client as any)[prop](...args);
+    };
   },
 });
