@@ -1,5 +1,19 @@
-import { createClient } from "@valebytes/topduka-node";
+import { createClient, TopDukaClient } from "@valebytes/topduka-node";
 
-export const duka = createClient({
-  apiKey: process.env.NEXT_PUBLIC_API_KEY!,
+let dukaInstance: TopDukaClient | null = null;
+
+function getDukaClient(): TopDukaClient {
+  if (!dukaInstance) {
+    dukaInstance = createClient({
+      apiKey: process.env.NEXT_PUBLIC_API_KEY!,
+    });
+  }
+  return dukaInstance;
+}
+
+export const duka = new Proxy({} as TopDukaClient, {
+  get: (_, prop) => {
+    const client = getDukaClient();
+    return (client as any)[prop];
+  },
 });
