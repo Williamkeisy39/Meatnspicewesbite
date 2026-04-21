@@ -22,6 +22,10 @@ const workSans = Work_Sans({
 export const metadata: Metadata = {
   title: "Meat & Spice Ltd",
   description: "Freshly cut beef, chicken, fish, goat, pork, and sausages delivered.",
+  icons: {
+    icon: "/meatnspiceicon.png",
+    apple: "/meatnspiceicon.png",
+  },
 };
 
 export default function RootLayout({
