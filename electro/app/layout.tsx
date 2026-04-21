@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Work_Sans } from "next/font/google";
 import "./globals.css";
 import React from "react";
 import { QueryProvider } from "@/lib/providers/query-provider";
@@ -11,16 +11,17 @@ import { MainHeader } from "@/components/features/layout/MainHeader";
 import CartDrawer from "@/components/features/cart/CartDrawer";
 import DynamicHead from "@/components/common/DynamicHead";
 import { Footer } from "@/components/features/layout/Footer";
+import { FloatingWhatsApp } from "@/components/common/FloatingWhatsApp";
 
-const inter = Inter({
+const workSans = Work_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-work-sans",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Store",
-  description: "Welcome to our store",
+  title: "Meat & Spice Ltd",
+  description: "Freshly cut beef, chicken, fish, goat, pork, and sausages delivered.",
 };
 
 export default function RootLayout({
@@ -29,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className={`${inter.className} bg-background text-gray-600 antialiased`}>
+    <html lang="en" className={workSans.variable} suppressHydrationWarning>
+      <body className={`${workSans.className} bg-background text-gray-600 antialiased`}>
         <QueryProvider>
           <StoreProvider>
             <DynamicHead />
@@ -44,6 +45,7 @@ export default function RootLayout({
                   </main>
                   <Footer />
                 </div>
+                <FloatingWhatsApp />
               </CartDrawerProvider>
             </CartProvider>
           </StoreProvider>

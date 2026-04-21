@@ -1,20 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) project for **Meat & Spice Ltd** with a Prisma + PostgreSQL backend and an admin panel.
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create a `.env` file (manually) with your PostgreSQL connection string:
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB_NAME?schema=public"
+ADMIN_EMAIL="admin@meatnspice.local"
+ADMIN_PASSWORD="change-this-admin-password"
+ADMIN_SESSION_TOKEN="change-this-session-token"
+```
+
+Or use the included Docker setup:
+
+```bash
+docker compose up -d
+```
+
+Then set:
+
+```bash
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/meatnspice?schema=public"
+```
+
+3. Generate Prisma client, run migrations, and seed sample data:
+
+```bash
+npm run prisma:generate
+npm run prisma:migrate -- --name init
+npm run prisma:seed
+```
+
+4. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+Admin panel: [http://localhost:3000/admin](http://localhost:3000/admin)
+
+Default seeded admin login uses `ADMIN_EMAIL` + `ADMIN_PASSWORD` from your env.
+
+Admin product form supports direct image upload (`/api/admin/uploads`) and URL input.
+Uploaded local files are cleaned up automatically when a product image is replaced or the product is deleted.
+
+Optional maintenance scripts:
+
+```bash
+npm run uploads:cleanup:dry
+npm run uploads:cleanup
+```
+
+Use dry-run first to preview orphaned files in `public/uploads`.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

@@ -3,10 +3,10 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCart, createCart, updateCartProduct, deleteCart, getCartSessionId } from "@/lib/actions/cart";
-import type { Cart } from "@valebytes/topduka-node";
+import type { CartSummary } from "@/lib/cart/types";
 
 interface CartContextValue {
-    cart: Cart | null;
+    cart: CartSummary | null;
     isLoading: boolean;
     isOpen: boolean;
     itemCount: number;
@@ -59,14 +59,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (error && ready) {
-            const axiosError = error as any;
-            if (axiosError?.response?.status === 400) {
-                deleteCart().then(() => {
-                    return createCart();
-                }).then(() => {
+            deleteCart()
+                .then(() => createCart())
+                .then(() => {
                     queryClient.invalidateQueries({ queryKey: ["cart"] });
+                })
+                .catch((err) => {
+                    console.error("[Cart] Failed to reset session after error:", err);
                 });
-            }
         }
     }, [error, ready, queryClient]);
 

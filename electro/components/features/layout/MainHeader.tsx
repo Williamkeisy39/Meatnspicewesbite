@@ -2,12 +2,14 @@
 
 import { ShoppingBag, Search, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/providers/store-provider";
 import { useCartContext } from "@/lib/providers/cart-provider";
 import { useCartDrawer } from "../../context/CartDrawerContext";
 import { useCategories } from "@/lib/hooks";
+import type { Category } from "@/lib/catalog/types";
 
 export function MainHeader() {
     const { storeName, formatPrice } = useStore();
@@ -45,8 +47,14 @@ export function MainHeader() {
 
                 {/* Logo */}
                 <Link href="/" className="flex-shrink-0 group flex items-center gap-2 min-w-fit">
-                    <div className="bg-secondary h-8 w-8 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <span className="text-white font-bold text-sm leading-none">{storeName.charAt(0)}</span>
+                    <div className="relative h-8 w-8 rounded-lg overflow-hidden border border-border group-hover:scale-105 transition-transform bg-white">
+                        <Image
+                            src="/meatnspiceicon.png"
+                            alt={storeName}
+                            fill
+                            className="object-cover"
+                            sizes="32px"
+                        />
                     </div>
                     <span className="text-base font-bold text-gray-900 tracking-tight">{storeName}</span>
                 </Link>
@@ -59,7 +67,7 @@ export function MainHeader() {
                     <Link href="/search" className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 rounded-lg transition-colors">
                         Shop
                     </Link>
-                    {visibleCategories.map((cat) => (
+                    {visibleCategories.map((cat: Category) => (
                         <Link
                             key={cat.id}
                             href={`/search?category=${cat.id}&categoryName=${encodeURIComponent(cat.name)}`}
@@ -78,7 +86,7 @@ export function MainHeader() {
                             </button>
                             {moreOpen && (
                                 <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-100 rounded-xl shadow-lg py-1.5 z-50 animate-fade-in-up">
-                                    {overflowCategories.map((cat) => (
+                                    {overflowCategories.map((cat: Category) => (
                                         <Link
                                             key={cat.id}
                                             href={`/search?category=${cat.id}&categoryName=${encodeURIComponent(cat.name)}`}

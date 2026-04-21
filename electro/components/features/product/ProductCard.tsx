@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart, Zap, Loader2 } from "lucide-react";
-import type { Product } from "@valebytes/topduka-node";
+import type { Product } from "@/lib/catalog/types";
 import { useStore } from "@/lib/providers/store-provider";
 import { useCartContext } from "@/lib/providers/cart-provider";
 import { useCartDrawer } from "../../context/CartDrawerContext";
@@ -45,8 +45,8 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
                     <Link href={`/${product.id}`} className="text-sm font-bold text-gray-800 hover:text-secondary truncate transition-colors">
                         {product.name}
                     </Link>
-                    <div className="flex items-center gap-2 mt-1">
-                        <span className="text-secondary font-extrabold text-sm">{formatPrice(displayPrice)}</span>
+                    <div className="flex items-center gap-2 mt-1 text-sm">
+                        <span className="text-secondary font-extrabold">{formatPrice(displayPrice)}</span>
                         {product.sales_price && <span className="text-[11px] text-gray-400 line-through">{formatPrice(product.price)}</span>}
                     </div>
                 </div>

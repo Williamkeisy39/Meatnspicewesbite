@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useStore } from "@/lib/providers/store-provider";
 import { useCategories } from "@/lib/hooks";
-import { Phone, MapPin, Mail } from "lucide-react";
+import { Phone, Mail } from "lucide-react";
+import type { Category } from "@/lib/catalog/types";
 
 export function Footer() {
     const { storeName, store, storeEmail, storePhone, storeAddress } = useStore();
@@ -12,8 +14,8 @@ export function Footer() {
     const socials = [
         store?.instagram && { name: "Instagram", url: store.instagram },
         store?.twitter && { name: "Twitter", url: store.twitter },
-        store?.facebook && { name: "Facebook", url: store.facebook },
         store?.whatsapp && { name: "WhatsApp", url: `https://wa.me/${store.whatsapp}` },
+        store?.tiktok && { name: "TikTok", url: store.tiktok },
     ].filter(Boolean) as { name: string; url: string }[];
 
     return (
@@ -23,8 +25,8 @@ export function Footer() {
                     {/* Brand */}
                     <div className="lg:col-span-2 space-y-5">
                         <div className="flex items-center gap-2">
-                            <div className="bg-secondary p-2 rounded-xl">
-                                <span className="text-white font-black text-lg">{storeName.charAt(0)}</span>
+                            <div className="relative h-10 w-10 rounded-xl overflow-hidden border border-white/20 bg-white">
+                                <Image src="/meatnspiceicon.png" alt={storeName} fill className="object-cover" sizes="40px" />
                             </div>
                             <span className="text-2xl font-black tracking-tight uppercase">{storeName}</span>
                         </div>
@@ -65,7 +67,7 @@ export function Footer() {
                                     All Products
                                 </Link>
                             </li>
-                            {categories.slice(0, 5).map((cat) => (
+                            {categories.slice(0, 5).map((cat: Category) => (
                                 <li key={cat.id}>
                                     <Link href={`/search?category=${cat.id}&categoryName=${encodeURIComponent(cat.name)}`} className="hover:text-secondary transition-colors hover:pl-1 duration-200">
                                         {cat.name}

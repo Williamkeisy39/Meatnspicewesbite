@@ -5,14 +5,15 @@ import Link from "next/link";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { duka } from "@/lib/duka";
 import { useStore } from "@/lib/providers/store-provider";
-import { useCartContext } from "@/lib/providers/cart-provider";
-import { useCartDrawer } from "../../components/context/CartDrawerContext";
 import { useProducts } from "@/lib/hooks";
+import { getProduct } from "@/lib/actions/products";
+import type { Product } from "@/lib/catalog/types";
 import { ProductCard } from "../../components/features/product/ProductCard";
 import { SidebarBestSellers } from "../../components/features/product/ProductSidebar";
 import { Minus, Plus, ShoppingCart, Loader2 } from "lucide-react";
+import { useCartContext } from "@/lib/providers/cart-provider";
+import { useCartDrawer } from "../../components/context/CartDrawerContext";
 
 export default function ProductPage() {
     const { id } = useParams<{ id: string }>();
@@ -24,22 +25,15 @@ export default function ProductPage() {
 
     const { data: product, isLoading } = useQuery({
         queryKey: ["product", id],
-        queryFn: () => duka.products.list({ id }),
-        select: (data) => data?.[0],
+        queryFn: () => getProduct(id),
         enabled: !!id,
     });
 
     const { data: related = [] } = useProducts({ status: "active", skip: 0 });
 
-    const isAdding = addingProductId === id;
     const displayPrice = product?.sales_price || product?.price || 0;
     const discount = product?.sales_price ? Math.round(((product.price - product.sales_price) / product.price) * 100) : 0;
-
-    const handleAddToCart = async () => {
-        if (!product) return;
-        await addToCart(product.id, quantity);
-        openCart();
-    };
+    const isAdding = product ? addingProductId === product.id : false;
 
     if (isLoading) {
         return (
@@ -60,7 +54,17 @@ export default function ProductPage() {
         );
     }
 
-    const relatedProducts = related.filter(p => p.id !== product.id).slice(0, 4);
+    const relatedProducts = related
+        .filter((p: Product) => p.id !== product.id)
+        .slice(0, 4);
+
+    const totalPrice = displayPrice * quantity;
+
+    const handleAddToCart = async () => {
+        if (!product) return;
+        await addToCart(product.id, quantity);
+        openCart();
+    };
 
     return (
         <div className="container py-8">
@@ -147,12 +151,12 @@ export default function ProductPage() {
                                 <button
                                     onClick={handleAddToCart}
                                     disabled={isAdding}
-                                    className="flex-1 bg-secondary text-white font-extrabold uppercase text-sm tracking-wide py-3 px-6 rounded-xl hover:bg-secondary-hover transition-all shadow-lg shadow-secondary/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="flex-1 bg-secondary text-white font-extrabold uppercase text-sm tracking-wide py-3 px-6 rounded-xl hover:bg-secondary-hover transition-all shadow-lg shadow-secondary/20 flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
                                     {isAdding ? (
                                         <><Loader2 size={18} className="animate-spin" /> Adding...</>
                                     ) : (
-                                        <><ShoppingCart size={18} /> Add to Cart — {formatPrice(displayPrice * quantity)}</>
+                                        <><ShoppingCart size={18} /> Add to Cart — {formatPrice(totalPrice)}</>
                                     )}
                                 </button>
                             </div>
@@ -178,7 +182,7 @@ export default function ProductPage() {
                                 <span className="border-b-2 border-primary absolute bottom-[-1px] left-0 pb-4 pr-4">Related Products</span>
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {relatedProducts.map((p) => (
+                                {relatedProducts.map((p: Product) => (
                                     <ProductCard key={p.id} product={p} />
                                 ))}
                             </div>

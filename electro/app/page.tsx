@@ -34,12 +34,12 @@ export default function Home() {
                     <Sparkles size={24} />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-black text-white uppercase tracking-tight leading-none">Popular Products</h3>
-                    <p className="text-white/50 text-sm mt-1 font-medium">Trending this week</p>
+                    <h3 className="text-2xl font-black text-white uppercase tracking-tight leading-none">Butcher's Favorites</h3>
+                    <p className="text-white/50 text-sm mt-1 font-medium">Freshly cut standouts this week</p>
                   </div>
                 </div>
                 <Link href="/search" className="flex items-center gap-2 text-sm font-bold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-5 py-2.5 rounded-xl border border-white/10 transition-all">
-                  View All <ArrowRight size={16} />
+                  View All Cuts <ArrowRight size={16} />
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -88,9 +88,9 @@ export default function Home() {
             {/* Featured Products */}
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="section-title">Featured Products</h2>
+                <h2 className="section-title">Featured Cuts</h2>
                 <Link href="/search" className="text-sm font-bold text-secondary flex items-center gap-1 hover:gap-2 transition-all">
-                  View All <ArrowRight size={16} />
+                  View All Cuts <ArrowRight size={16} />
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -104,9 +104,9 @@ export default function Home() {
             {deals.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="section-title">Deals & Offers</h2>
+                  <h2 className="section-title">Meat Deals & Offers</h2>
                   <Link href="/search" className="text-sm font-bold text-secondary flex items-center gap-1 hover:gap-2 transition-all">
-                    View All <ArrowRight size={16} />
+                    View All Cuts <ArrowRight size={16} />
                   </Link>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -120,9 +120,9 @@ export default function Home() {
             {/* Recommended Products */}
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="section-title">Recommended For You</h2>
+                <h2 className="section-title">Recommended Cuts For You</h2>
                 <Link href="/search" className="text-sm font-bold text-secondary flex items-center gap-1 hover:gap-2 transition-all">
-                  View All <ArrowRight size={16} />
+                  View All Cuts <ArrowRight size={16} />
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

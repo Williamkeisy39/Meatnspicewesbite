@@ -19,7 +19,7 @@ function SearchContent() {
         category_id: categoryId,
         search_term: query,
     });
-    const { data: categories = [] } = useCategories({ is_active: "true" });
+    const { data: categories = [], isLoading: categoriesLoading } = useCategories({ is_active: "true" });
 
     return (
         <div className="container py-8">
@@ -41,16 +41,20 @@ function SearchContent() {
                                     All Products
                                 </Link>
                             </li>
-                            {categories.map((cat) => (
-                                <li key={cat.id}>
-                                    <Link
-                                        href={`/search?category=${cat.id}&categoryName=${encodeURIComponent(cat.name)}`}
-                                        className={`block py-1 hover:text-secondary transition-colors ${categoryId === cat.id ? "text-secondary font-bold" : ""}`}
-                                    >
-                                        {cat.name}
-                                    </Link>
-                                </li>
-                            ))}
+                            {categoriesLoading ? (
+                                <li className="text-xs text-gray-400">Loading categories...</li>
+                            ) : (
+                                categories.map((cat) => (
+                                    <li key={cat.id}>
+                                        <Link
+                                            href={`/search?category=${cat.id}&categoryName=${encodeURIComponent(cat.name)}`}
+                                            className={`block py-1 hover:text-secondary transition-colors ${categoryId === cat.id ? "text-secondary font-bold" : ""}`}
+                                        >
+                                            {cat.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            )}
                         </ul>
                     </div>
 

@@ -1,24 +1,16 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getProducts, getPopularProducts, getDiscountedProducts, getBestSellingProducts } from "@/lib/actions/products";
 import { getCategories, getCategoryProducts } from "@/lib/actions/categories";
-import { getBanners } from "@/lib/actions/banners";
-import { getOrders, getOrder } from "@/lib/actions/orders";
-import { initializePayment, verifyPayment } from "@/lib/actions/payments";
 import type {
     Product,
     Category,
     ProductGetParams,
     CategoryGetParams,
     DiscountedProductsParams,
-    BannerGetParams,
-    Order,
-    InitializePaymentParams,
-    InitializePaymentResponse,
-    VerifyPaymentParams,
-    VerifyPaymentResponse,
-} from "@valebytes/topduka-node";
+} from "@/lib/catalog/types";
+import type { BannerQueryParams } from "@/lib/types/banner";
 
 // ── Products ──
 
@@ -64,43 +56,20 @@ export function useBestSellingProducts(skip?: number) {
 
 // ── Banners ──
 
-export function useBanners(params?: BannerGetParams) {
+export function useBanners(params?: BannerQueryParams) {
     return useQuery({
         queryKey: ["banners", params],
-        queryFn: () => getBanners(params),
+        queryFn: async () => {
+            const searchParams = new URLSearchParams();
+            if (params?.status) searchParams.set("status", params.status);
+            if (params?.placement) searchParams.set("placement", params.placement);
+
+            const res = await fetch(`/api/banners${searchParams.size ? `?${searchParams.toString()}` : ""}`);
+            if (!res.ok) {
+                throw new Error("Failed to load banners");
+            }
+            return res.json();
+        },
         staleTime: 1000 * 60 * 10,
-    });
-}
-
-// ── Orders ──
-
-export function useOrders(skip?: number) {
-    return useQuery({
-        queryKey: ["orders", skip],
-        queryFn: () => getOrders(skip),
-        staleTime: 1000 * 60 * 5,
-    });
-}
-
-export function useOrder(orderId: string) {
-    return useQuery({
-        queryKey: ["order", orderId],
-        queryFn: () => getOrder(orderId),
-        enabled: !!orderId,
-        staleTime: 1000 * 60 * 5,
-    });
-}
-
-// ── Payments ──
-
-export function useInitializePayment() {
-    return useMutation({
-        mutationFn: (params: InitializePaymentParams) => initializePayment(params),
-    });
-}
-
-export function useVerifyPayment() {
-    return useMutation({
-        mutationFn: (params: VerifyPaymentParams) => verifyPayment(params),
     });
 }

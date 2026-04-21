@@ -1,15 +1,34 @@
 "use server";
 
-import { duka } from "@/lib/duka";
+import { prisma } from "@/lib/prisma";
 
-export async function getOrders(skip?: number) {
-  return await duka.orders.list(skip);
+const PAGE_SIZE = 20;
+
+export async function getOrders(skip: number = 0) {
+  return prisma.order.findMany({
+    skip,
+    take: PAGE_SIZE,
+    orderBy: { createdAt: "desc" },
+    include: {
+      items: true,
+    },
+  });
 }
 
 export async function getOrder(orderId: string) {
-  return await duka.orders.get(orderId);
+  return prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      items: true,
+    },
+  });
 }
 
-export async function trackOrder(orderNumber: number) {
-  return await duka.orders.track(orderNumber);
+export async function trackOrder(reference: string) {
+  return prisma.order.findUnique({
+    where: { reference },
+    include: {
+      items: true,
+    },
+  });
 }

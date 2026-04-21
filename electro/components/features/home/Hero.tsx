@@ -5,11 +5,12 @@ import Link from "next/link";
 import { ArrowRight, Zap, Sparkles, TrendingUp, Truck, ShieldCheck, Headphones, RotateCcw, Gift } from "lucide-react";
 import { useBanners } from "@/lib/hooks";
 import { useStore } from "@/lib/providers/store-provider";
-import type { Banner } from "@valebytes/topduka-node";
+import type { Banner } from "@/lib/types/banner";
 
 function MainBanner({ banner }: { banner: Banner }) {
-    const Wrapper = banner.link_url ? Link : "div";
-    const wrapperProps = banner.link_url ? { href: banner.link_url } : {};
+    const hasLink = Boolean(banner.link_url);
+    const Wrapper = hasLink ? Link : "div";
+    const wrapperProps = hasLink ? { href: banner.link_url } : {};
 
     return (
         <Wrapper {...(wrapperProps as any)} className="lg:col-span-8 relative overflow-hidden shadow-elevated group block rounded-2xl">
@@ -39,9 +40,18 @@ function MainBanner({ banner }: { banner: Banner }) {
                     </p>
                 )}
                 <div className="pt-2">
-                    <Link href={banner.link_url || "/search"} className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-hover text-white px-7 py-3 rounded-xl text-sm font-extrabold uppercase tracking-wide shadow-xl shadow-secondary/30 transition-all">
-                        Shop Now <ArrowRight size={16} />
-                    </Link>
+                    {hasLink ? (
+                        <span className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-hover text-white px-7 py-3 rounded-xl text-sm font-extrabold uppercase tracking-wide shadow-xl shadow-secondary/30 transition-all">
+                            Shop Now <ArrowRight size={16} />
+                        </span>
+                    ) : (
+                        <Link
+                            href={banner.link_url || "/search"}
+                            className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-hover text-white px-7 py-3 rounded-xl text-sm font-extrabold uppercase tracking-wide shadow-xl shadow-secondary/30 transition-all"
+                        >
+                            Shop Now <ArrowRight size={16} />
+                        </Link>
+                    )}
                 </div>
             </div>
         </Wrapper>
@@ -56,17 +66,24 @@ function PlaceholderMainBanner({ storeName }: { storeName: string }) {
             <div className="absolute bottom-10 right-32 w-48 h-48 bg-accent-light/30 blur-[80px] pointer-events-none"></div>
             <div className="relative z-10 h-full flex flex-col justify-center px-10 lg:px-14 space-y-5 max-w-2xl py-12 min-h-[420px]">
                 <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold px-4 py-1.5 rounded-full text-[11px] uppercase tracking-widest shadow-lg w-fit">
-                    <Zap size={12} className="text-secondary" fill="currentColor" /> Welcome
+                    <Zap size={12} className="text-secondary" fill="currentColor" /> Fresh Today
                 </span>
                 <h1 className="text-4xl lg:text-5xl font-black text-white leading-[1.1] tracking-tight">
                     {storeName}
                 </h1>
-                <p className="text-base text-white/70 font-medium max-w-md leading-relaxed">
-                    Discover our latest collection of products at the best prices.
+                <p className="text-base text-white/80 font-semibold max-w-sm leading-relaxed">
+                    Meat & Spice delivers fresh packed beef, chicken, pork, fish, sausages, goat.
                 </p>
+                <div className="flex flex-wrap gap-2 max-w-md">
+                    {HERO_CATEGORIES.map((category) => (
+                        <span key={category} className="px-3 py-1 text-xs font-bold uppercase tracking-wide bg-white/10 border border-white/20 rounded-full text-white/80">
+                            {category}
+                        </span>
+                    ))}
+                </div>
                 <div className="pt-2">
                     <Link href="/search" className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-hover text-white px-7 py-3 rounded-xl text-sm font-extrabold uppercase tracking-wide shadow-xl shadow-secondary/30 transition-all">
-                        Shop Now <ArrowRight size={16} />
+                        Shop Fresh Cuts <ArrowRight size={16} />
                     </Link>
                 </div>
             </div>
@@ -122,7 +139,7 @@ function PlaceholderSideBanner({ title, subtitle, icon }: { title: string; subti
                     <span className="text-secondary font-bold text-[10px] uppercase tracking-[0.2em] mb-1 block">{subtitle}</span>
                     <h3 className="text-gray-900 text-xl font-extrabold leading-tight mb-1">{title}</h3>
                     <span className="text-secondary text-xs font-bold inline-flex items-center gap-1 mt-1 group-hover:gap-2 transition-all">
-                        Browse <ArrowRight size={12} />
+                        Shop Cuts <ArrowRight size={12} />
                     </span>
                 </div>
             </div>
@@ -134,8 +151,8 @@ export function Hero() {
     const { data: banners = [] } = useBanners({ status: "active" });
     const { storeName } = useStore();
 
-    const mainBanner = banners[0];
-    const sideBanners = banners.slice(1, 3);
+    const mainBanner = banners.find((banner: Banner) => banner.placement === "main") || banners[0];
+    const sideBanners = banners.filter((banner: Banner) => banner.placement !== "main").slice(0, 2);
 
     return (
         <div className="container py-6">
@@ -148,18 +165,18 @@ export function Hero() {
 
                 <div className="lg:col-span-4 flex flex-col gap-5">
                     {sideBanners.length >= 2 ? (
-                        sideBanners.map((banner) => (
+                        sideBanners.map((banner: Banner) => (
                             <SideBanner key={banner.id} banner={banner} />
                         ))
                     ) : sideBanners.length === 1 ? (
                         <>
                             <SideBanner banner={sideBanners[0]} />
-                            <PlaceholderSideBanner title="New Arrivals" subtitle="Just In" icon="arrivals" />
+                            <PlaceholderSideBanner title="Fresh Cuts" subtitle="Just Trimmed" icon="arrivals" />
                         </>
                     ) : (
                         <>
-                            <PlaceholderSideBanner title="New Arrivals" subtitle="Just In" icon="arrivals" />
-                            <PlaceholderSideBanner title="Best Sellers" subtitle="Top Picks" icon="sellers" />
+                            <PlaceholderSideBanner title="Fresh Cuts" subtitle="Just Trimmed" icon="arrivals" />
+                            <PlaceholderSideBanner title="Butcher's Picks" subtitle="Customer Faves" icon="sellers" />
                         </>
                     )}
                 </div>
@@ -183,10 +200,12 @@ export function Hero() {
     );
 }
 
+const HERO_CATEGORIES = ["Chicken", "Beef", "Sausages", "Fish", "Goat Meat", "Pork"];
+
 const TRUST_ITEMS = [
-    { icon: Truck, title: "Free Shipping", desc: "Orders over $99" },
-    { icon: ShieldCheck, title: "Secure Payment", desc: "100% protected" },
-    { icon: RotateCcw, title: "Easy Returns", desc: "30 day guarantee" },
-    { icon: Headphones, title: "24/7 Support", desc: "Expert help" },
-    { icon: Gift, title: "Gift Wrapping", desc: "Premium packaging" },
+    { icon: Truck, title: "Chilled Delivery", desc: "Cold-chain protected" },
+    { icon: ShieldCheck, title: "Butcher's Guarantee", desc: "Handled with care" },
+    { icon: RotateCcw, title: "Cut-to-Order", desc: "Trimmed to spec" },
+    { icon: Headphones, title: "Butcher Support", desc: "Talk to a pro" },
+    { icon: Gift, title: "Spice Pairings", desc: "Free rub suggestions" },
 ];

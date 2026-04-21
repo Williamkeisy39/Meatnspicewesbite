@@ -1,9 +1,24 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getStoreConfig, getStoreInfo } from "@/lib/actions/store";
-import type { StoreConfig, StoreInfo } from "@valebytes/topduka-node";
+
+interface StoreConfig {
+    currency_code: string;
+    vat_enabled?: boolean;
+    vat_rate?: number;
+}
+
+interface StoreInfo {
+    name: string;
+    logo: string;
+    email: string;
+    phone: string;
+    address: string;
+    instagram?: string;
+    twitter?: string;
+    whatsapp?: string;
+    tiktok?: string;
+}
 
 interface StoreContextValue {
     config: StoreConfig | null;
@@ -44,35 +59,41 @@ const currencySymbols: Record<string, string> = {
 };
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-    const { data: config, isLoading: configLoading } = useQuery({
-        queryKey: ["store-config"],
-        queryFn: () => getStoreConfig(),
-        staleTime: 1000 * 60 * 10,
-    });
+    const config: StoreConfig = {
+        currency_code: "KES",
+        vat_enabled: true,
+        vat_rate: 16,
+    };
 
-    const { data: store, isLoading: storeLoading } = useQuery({
-        queryKey: ["store-info"],
-        queryFn: () => getStoreInfo(),
-        staleTime: 1000 * 60 * 10,
-    });
+    const store: StoreInfo = {
+        name: "Meat & Spice Ltd",
+        logo: "/meatnspiceicon.png",
+        email: "meatnspiceltd@gmail.com",
+        phone: "+254743467191",
+        address: "Nairobi, Kenya",
+        instagram: "https://instagram.com",
+        twitter: undefined,
+        tiktok: "https://www.tiktok.com/@meat.spice.limited",
+        whatsapp: "254743467191",
+    };
 
-    const isLoading = configLoading || storeLoading;
+    const isLoading = false;
     const currency = config?.currency_code?.toUpperCase() || "USD";
     const currencyCode = config?.currency_code?.toLowerCase() || "";
     const symbol = currencySymbols[currencyCode] || config?.currency_code?.toUpperCase() || "$";
 
     const formatPrice = (amount: number) => `${symbol}${amount.toFixed(2)}`;
 
-    const storeName = store?.name || "Megastore";
-    const storeLogo = store?.logo || "";
-    const storeEmail = store?.email || "";
-    const storePhone = store?.phone || "";
-    const storeAddress = store?.address || "";
+    const storeName = store.name;
+    const storeLogo = store.logo;
+    const storeEmail = store.email;
+    const storePhone = store.phone;
+    const storeAddress = store.address;
 
     return (
         <StoreContext.Provider value={{
-            config: config ?? null,
-            store: store ?? null,
+            config,
+            store,
             isLoading,
             currency,
             storeName,
