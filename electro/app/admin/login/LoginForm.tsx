@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -10,6 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function LoginForm() {
+  return (
+    <Suspense fallback={<div className="container py-16 flex justify-center">Loading...</div>}>
+      <LoginFormInner />
+    </Suspense>
+  );
+}
+
+function LoginFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("admin@meatnspice.local");
