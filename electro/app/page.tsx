@@ -52,10 +52,33 @@ export default function Home() {
         </section>
       )}
 
+      {/* Mobile Top Categories */}
+      <div className="container lg:hidden mt-6">
+        <div className="bg-white rounded-2xl shadow-card border border-border overflow-hidden">
+          <div className="bg-primary px-5 py-4">
+            <h3 className="font-extrabold text-white text-sm flex items-center gap-2 uppercase tracking-wider">
+              <Grid3x3 size={16} /> Top Categories
+            </h3>
+          </div>
+          <div className="p-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                href={`/search?category=${cat.id}&categoryName=${encodeURIComponent(cat.name)}`}
+                className="flex items-center justify-between text-sm text-gray-600 hover:text-secondary hover:bg-secondary/5 px-3 py-2.5 rounded-lg transition-all font-medium"
+              >
+                <span className="truncate">{cat.name}</span>
+                <ChevronRight size={14} className="text-secondary flex-shrink-0" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="container mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
 
-          {/* LEFT SIDEBAR */}
+          {/* LEFT SIDEBAR (desktop only) */}
           <aside className="hidden lg:block lg:col-span-3 space-y-6 sticky top-32 h-fit">
             {/* Categories */}
             <div className="bg-white rounded-2xl shadow-card border border-border overflow-hidden">
