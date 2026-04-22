@@ -96,7 +96,7 @@ function SideBanner({ banner }: { banner: Banner }) {
     const wrapperProps = banner.link_url ? { href: banner.link_url } : {};
 
     return (
-        <Wrapper {...(wrapperProps as any)} className="flex-1 relative overflow-hidden shadow-lg group cursor-pointer block rounded-2xl">
+        <Wrapper {...(wrapperProps as any)} className="flex-1 min-h-[200px] relative overflow-hidden shadow-lg group cursor-pointer block rounded-2xl">
             {banner.image_url && (
                 <Image
                     src={banner.image_url}
@@ -126,7 +126,7 @@ function SideBanner({ banner }: { banner: Banner }) {
 
 function PlaceholderSideBanner({ title, subtitle, icon }: { title: string; subtitle: string; icon: "arrivals" | "sellers" }) {
     return (
-        <Link href="/search" className="flex-1 relative overflow-hidden group block bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-2xl">
+        <Link href="/search" className="flex-1 min-h-[200px] relative overflow-hidden group block bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-2xl">
             <div className="absolute top-4 right-4 opacity-[0.06] pointer-events-none">
                 {icon === "arrivals" ? (
                     <Sparkles size={100} strokeWidth={1} />

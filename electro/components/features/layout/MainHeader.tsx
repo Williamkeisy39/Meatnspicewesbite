@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag, Search, ChevronDown } from "lucide-react";
+import { ShoppingBag, Search, ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
@@ -17,6 +17,8 @@ export function MainHeader() {
     const { toggleCart } = useCartDrawer();
     const [searchQuery, setSearchQuery] = useState("");
     const [moreOpen, setMoreOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
     const moreRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { data: categories = [] } = useCategories({ is_active: "true" });
@@ -38,7 +40,14 @@ export function MainHeader() {
         e.preventDefault();
         if (searchQuery.trim()) {
             router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+            setMobileSearchOpen(false);
+            setMobileMenuOpen(false);
         }
+    };
+
+    const closeMobile = () => {
+        setMobileMenuOpen(false);
+        setMobileSearchOpen(false);
     };
 
     return (
@@ -117,6 +126,15 @@ export function MainHeader() {
                         </div>
                     </form>
 
+                    {/* Mobile search toggle */}
+                    <button
+                        onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+                        className="md:hidden flex items-center justify-center h-9 w-9 rounded-lg bg-gray-100/70 hover:bg-gray-100 transition-colors"
+                        aria-label="Search"
+                    >
+                        <Search size={16} className="text-gray-600" />
+                    </button>
+
                     <button
                         onClick={toggleCart}
                         className="relative flex items-center gap-2 h-9 pl-3 pr-3.5 rounded-lg bg-gray-100/70 hover:bg-gray-100 transition-colors group"
@@ -129,9 +147,66 @@ export function MainHeader() {
                         )}
                         <span className="hidden md:inline text-sm font-medium text-gray-600">{formatPrice(cart?.total || 0)}</span>
                     </button>
+
+                    {/* Mobile hamburger */}
+                    <button
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        className="lg:hidden flex items-center justify-center h-9 w-9 rounded-lg bg-gray-100/70 hover:bg-gray-100 transition-colors"
+                        aria-label="Menu"
+                    >
+                        {mobileMenuOpen ? <X size={18} className="text-gray-600" /> : <Menu size={18} className="text-gray-600" />}
+                    </button>
                 </div>
 
             </div>
+
+            {/* Mobile search bar */}
+            {mobileSearchOpen && (
+                <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3">
+                    <form onSubmit={handleSearch}>
+                        <div className="relative flex items-center bg-gray-100/70 rounded-lg h-10 focus-within:bg-white focus-within:ring-1 focus-within:ring-secondary/30 transition-all">
+                            <Search size={16} className="ml-3 text-gray-400 flex-shrink-0" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search products..."
+                                autoFocus
+                                className="flex-1 px-3 bg-transparent text-gray-900 placeholder:text-gray-400 focus:outline-none h-full text-sm"
+                            />
+                        </div>
+                    </form>
+                </div>
+            )}
+
+            {/* Mobile menu drawer */}
+            {mobileMenuOpen && (
+                <div className="lg:hidden border-t border-gray-100 bg-white max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+                    <nav className="flex flex-col py-2">
+                        <Link href="/" onClick={closeMobile} className="px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                            Home
+                        </Link>
+                        <Link href="/search" onClick={closeMobile} className="px-5 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                            Shop All
+                        </Link>
+                        {categories.length > 0 && (
+                            <div className="px-5 pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                                Categories
+                            </div>
+                        )}
+                        {categories.map((cat: Category) => (
+                            <Link
+                                key={cat.id}
+                                href={`/search?category=${cat.id}&categoryName=${encodeURIComponent(cat.name)}`}
+                                onClick={closeMobile}
+                                className="px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+                            >
+                                {cat.name}
+                            </Link>
+                        ))}
+                    </nav>
+                </div>
+            )}
         </header>
     );
 }
